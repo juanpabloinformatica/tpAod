@@ -1,0 +1,17 @@
+Iterative needleman-wunsch algorithm
+sirve para realizar alineamientos globale de dos secuencias
+
+A = secuencia 1 , m = A.length
+B = secuencia 2 , n = B.length
+
+Necesitamos saber que simbolos son diferentes e iguales
+entre si por eso se hace uso de una matriz cuadrada (S)
+
+cada elemento S_{i,j} indique similitud entre los elementos
+i,j.
+
+Se necesita un parametro (d) el cual indicara como se valorara
+que un simbolo no quede alineado con otro y que se utilice un hueco 
+en su lugar
+
+Para determinar la puntuaci'on optima y poder construir
