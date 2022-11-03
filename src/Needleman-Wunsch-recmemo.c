@@ -139,6 +139,10 @@ long EditDistance_NW_Rec(char* A, size_t lengthA, char* B, size_t lengthB)
 
 static int kronecker(char* A, int i, char* B, int j)
 {
+   if (isUnknownBase(A[i]))
+   {
+      return 1;
+   }
    if (isSameBase(A[i], B[j])) {
       return 0;
    }
@@ -153,17 +157,25 @@ long EditDistance_NW_iterative(char* A, size_t lengthA, char* B, size_t lengthB)
         tableau[i] = (long *) malloc((lengthB + 1) * sizeof(long));
     }
     tableau[0][0] = 0;
+    // int k = 0;
     for (int i = 1; i <= lengthA; i++) {
-        tableau[i][0] = 2*i;
+      //   if (isBase(A[i-1])) {
+      //       k++;
+      //   }
+        tableau[i][0] = (isBase(A[i-1]) ? 2 : 0) + tableau[i-1][0];
     }
+    // k = 0;
     for (int j = 1; j <= lengthB; j++) {
-        tableau[0][j] = 2*j;
+      //   if (isBase(B[j-1])) {
+      //       k++;
+      //   }
+        tableau[0][j] = (isBase(B[j-1]) ? 2 : 0) + tableau[0][j-1];
     }
     for (int i = 1; i <= lengthA; i++) {
         for (int j = 1; j <= lengthB; j++) {
             long align = tableau[i-1][j-1] + kronecker(A, i-1, B, j-1);
-            long delete = 2 + tableau[i-1][j];
-            long insert = 2 + tableau[i][j-1];
+            long delete = (isBase(A[i-1]) ? 2 : 0) + tableau[i-1][j];
+            long insert = (isBase(B[j-1]) ? 2 : 0) + tableau[i][j-1];
             long min = align;
             if (delete < min) {
                 min = delete;
