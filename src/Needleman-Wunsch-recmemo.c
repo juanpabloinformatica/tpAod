@@ -139,7 +139,7 @@ long EditDistance_NW_Rec(char* A, size_t lengthA, char* B, size_t lengthB)
 
 static int kronecker(char* A, int i, char* B, int j)
 {
-   if (isUnknownBase(A[i]))
+   if (isUnknownBase(A[i]) || isUnknownBase(B[j]))
    {
       return 1;
    }
@@ -173,6 +173,7 @@ long EditDistance_NW_iterative(char* A, size_t lengthA, char* B, size_t lengthB)
     }
     for (int i = 1; i <= lengthA; i++) {
         for (int j = 1; j <= lengthB; j++) {
+            // long align = ((isBase(A[i-1]) && isBase(B[j-1])) ? kronecker(A, i-1, B, j-1) : 0) + tableau[i-1][j-1];
             long align = tableau[i-1][j-1] + kronecker(A, i-1, B, j-1);
             long delete = (isBase(A[i-1]) ? 2 : 0) + tableau[i-1][j];
             long insert = (isBase(B[j-1]) ? 2 : 0) + tableau[i][j-1];
@@ -183,7 +184,13 @@ long EditDistance_NW_iterative(char* A, size_t lengthA, char* B, size_t lengthB)
             if (insert < min) {
                 min = insert;
             }
-            tableau[i][j] = min;
+            if (!isBase(A[i-1])) {
+               tableau[i][j] = tableau[i-1][j];
+            } else if (!isBase(B[j-1])) {
+               tableau[i][j] = tableau[i][j-1];
+            } else {
+               tableau[i][j] = min;
+            }
         }
     }
     return tableau[lengthA][lengthB];
