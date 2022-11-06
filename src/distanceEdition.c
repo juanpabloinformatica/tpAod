@@ -45,7 +45,6 @@ EXAMPLE
  */
 
 #include "Needleman-Wunsch-recmemo.h" // Recursive implementation of NeedlemanWunsch with memoization
-#include "Needleman-Wunsch-iterative.h"
 
 #include <stdio.h>  
 #include <stdlib.h> 
@@ -180,7 +179,6 @@ int main(int argc, char *argv[])
       }
    } 
 
-     
 
    long res = EditDistance_NW_iterative(seq[0], length[0], seq[1], length[1]);
 
