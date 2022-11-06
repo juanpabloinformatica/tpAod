@@ -48,4 +48,5 @@
  *
  */
 long EditDistance_NW_Rec(char* A, size_t lengthA, char* B, size_t lengthB);
+long EditDistance_NW_iterative(char* A, size_t lengthA, char* B, size_t lengthB);
 
