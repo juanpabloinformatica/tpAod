@@ -195,3 +195,56 @@ long EditDistance_NW_iterative(char* A, size_t lengthA, char* B, size_t lengthB)
     }
     return tableau[lengthA][lengthB];
 }
+
+long EditDistance_NW_cache_aware(char* A, size_t lengthA, char* B, size_t lengthB, size_t block_size)
+{
+    _init_base_match();
+    long **tableau = (long **) malloc((lengthA + 1) * sizeof(long *));
+    for (int i = 0; i <= lengthA; i++) {
+        tableau[i] = (long *) malloc((lengthB + 1) * sizeof(long));
+    }
+    tableau[0][0] = 0;
+    // int k = 0;
+    for (int i = 1; i <= lengthA; i++) {
+      //   if (isBase(A[i-1])) {
+      //       k++;
+      //   }
+        tableau[i][0] = (isBase(A[i-1]) ? 2 : 0) + tableau[i-1][0];
+    }
+    // k = 0;
+    for (int j = 1; j <= lengthB; j++) {
+      //   if (isBase(B[j-1])) {
+      //       k++;
+      //   }
+        tableau[0][j] = (isBase(B[j-1]) ? 2 : 0) + tableau[0][j-1];
+    }
+    for (int I = 1; I <= lengthA; I+=block_size) {
+        for (int J = 1; J <= lengthB; J+= block_size) {
+            // long align = ((isBase(A[i-1]) && isBase(B[j-1])) ? kronecker(A, i-1, B, j-1) : 0) + tableau[i-1][j-1];
+            int i_end = (I+block_size) < lengthA ? I + block_size : lengthA;
+            int j_end = (J+block_size) < lengthB ? J + block_size : lengthB;
+            for (int i = I; i <= i_end; i++) {
+               for (int j = J; j <= j_end; j++) {
+                  long align = tableau[i-1][j-1] + kronecker(A, i-1, B, j-1);
+                  long delete = (isBase(A[i-1]) ? 2 : 0) + tableau[i-1][j];
+                  long insert = (isBase(B[j-1]) ? 2 : 0) + tableau[i][j-1];
+                  long min = align;
+                  if (delete < min) {
+                     min = delete;
+                  }
+                  if (insert < min) {
+                     min = insert;
+                  }
+                  if (!isBase(A[i-1])) {
+                     tableau[i][j] = tableau[i-1][j];
+                  } else if (!isBase(B[j-1])) {
+                     tableau[i][j] = tableau[i][j-1];
+                  } else {
+                     tableau[i][j] = min;
+                  }
+               }
+            }
+        }
+    }
+    return tableau[lengthA][lengthB];
+}

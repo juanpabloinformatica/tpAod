@@ -181,7 +181,9 @@ int main(int argc, char *argv[])
    } 
 
      
+
    long res = EditDistance_NW_iterative(seq[0], length[0], seq[1], length[1]);
+
 
    {  for( int i = 0; i < 2; ++i ) 
       {  if (munmap( mmap_fd[i], (off_t) mmap_length[i]) != 0)  err(1, "munmap") ; 
